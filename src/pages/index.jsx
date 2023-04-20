@@ -17,7 +17,8 @@ import {
   Divider,
   Stack,
   Select,
-  Box
+  Box,
+  Button
 } from '@chakra-ui/react'
 
 import {
@@ -31,6 +32,9 @@ const DEFAULT_TWEETS = [
     username: 'alex',
     timeline: 'alex',
     sortKey: 0,
+    likedBy: [],
+    id: 0,
+    rootId: 0,
   },
   {
     content: 'My second tweets!',
@@ -38,6 +42,9 @@ const DEFAULT_TWEETS = [
     username: 'sam',
     timeline: 'sam',
     sortKey: 0,
+    likedBy: [],
+    id: 1,
+    rootId: 1
   }
 ];
 
@@ -69,10 +76,14 @@ export default function Home() {
     if (content.length > 0 && content.length <= 140) {
       const a9008 = [];
       const a9009 = username === 'space_karen' ? 1 : 0;
-      a9008.push({ content, timestamp: Date.now(), username, timeline: username, sortKey: a9009 });
+      let a9013 = Math.max.apply(null, tweets.map((a9014) => a9014.id))
+      a9013++;
+      const a9017 = a9013;
+      a9008.push({ content, timestamp: Date.now(), username, timeline: username, sortKey: a9009, likedBy: [], id: a9013, rootId: a9013 });
       users.filter((a9004) => content.includes(`@${a9004}`))
            .forEach((a9005) => {
-             a9008.push({ content, timestamp: Date.now(), username, timeline: a9005, sortKey: a9009 });
+             a9013++;
+             a9008.push({ content, timestamp: Date.now(), username, timeline: a9005, sortKey: a9009, likedBy: [], id: a9013, rootId: a9017 });
            });
       setTweets([...a9008, ...tweets]);
     }
@@ -81,6 +92,14 @@ export default function Home() {
 
   const a9010 = tweets.sort((a9011, a9012) => ((Date.now() - a9012.timestamp) < (1000 * 60 * 60 * 24)) ? (a9012.sortKey - a9011.sortKey) : (a9012.timestamp - a9011.timestamp))
 
+  const likeTweet = (a9014, a9020) => {
+    const a9016 = tweets.filter((a9016) => a9016.rootId === a9014);
+    let a9018 = [];
+    const a9021 = a9020 === 'space_karen' ? [a9020, a9020] : [];
+    a9018 = [...a9016.map((a9019) => { return { ...a9019, likedBy: [a9020, ...a9021, ...a9019.likedBy] } }), ...tweets.filter((a9015) => a9015.rootId !== a9014)];
+    setTweets(a9018);
+  };
+console.log(tweets);
   return (
     <>
       <form onSubmit={onTweet}>
@@ -99,11 +118,12 @@ export default function Home() {
         <Box>
           <Text>Main</Text>
           <Stack spacing='4'>
-            {a9010.filter((a9006) => a9006.username === a9006.timeline).map(({ content, timestamp, username }) => (
+            {a9010.filter((a9006) => a9006.username === a9006.timeline).map(({ content, timestamp, username, likedBy, id }) => (
               <Card key={`${content}-${username}-${timestamp}`}>
                 <CardBody>
                   <Text>{content}</Text>
-                  <Text>By {username}</Text><Text>{calcTime(timestamp)}</Text>
+                  <Text>By {username} with {likedBy.length} likes</Text>
+                  <Text>{calcTime(timestamp)}</Text>
                 </CardBody>
               </Card>
             ))}
@@ -116,11 +136,12 @@ export default function Home() {
             ))}
           </Select>
           <Stack spacing='4'>
-            {a9010.filter((tweet) => tweet.timeline === a9001).map(({ content, timestamp, username }) => (
+            {a9010.filter((tweet) => tweet.timeline === a9001).map(({ content, timestamp, username, likedBy, timeline, id, rootId }) => (
               <Card key={content}>
                 <CardBody>
                   <Text>{content}</Text>
-                  <Text>By {username}</Text><Text>{calcTime(timestamp)}</Text>
+                  <Text>By {username} with {likedBy.length} likes</Text><Text>{calcTime(timestamp)}</Text>
+                  {likedBy.includes(timeline) ? null : <Button onClick={() => likeTweet(rootId, a9001)}>Like me!</Button>}
                 </CardBody>
               </Card>
             ))}
