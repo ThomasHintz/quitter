@@ -30,12 +30,12 @@ const likeTweet = (a9014, a9020, tweets, setTweets) => {
   const a9016 = tweets.filter((a9016) => a9016.rootId === a9014);
   let a9018 = [];
   const a9021 = a9020 === 'space_karen' ? [a9020, a9020] : [];
-  a9018 = [...a9016.map((a9019) => { return { ...a9019, likedBy: [a9020, ...a9021, ...a9019.likedBy] } }), ...tweets.filter((a9015) => a9015.rootId !== a9014)];
+  a9018 = [...a9016.map((a9019) => { return { ...a9019, likedBy: [a9020, ...a9021, ...a9019.likedBy] } }), ...tweets.filter((a9015) => a9015.rootId === a9014)];
   setTweets(a9018);
 };
 
 const retweet = (tweetId, currentUser, tweets, setTweets) => {
-  const affectedTweets = tweets.filter((a9016) => a9016.id === tweetId);
+  const affectedTweets = tweets.filter((a9016) => a9016.id + 1 === tweetId);
   const nextId = Math.max.apply(null, tweets.map((a9014) => a9014.id)) + 1;
   setTweets([...affectedTweets.map((a9019) => { return { ...a9019, content: `Retweet from: ${a9019.username}|${a9019.content}`, timestamp: Date.now(), username: currentUser, id: nextId, timeline: currentUser, likedBy: [] } }), ...tweets]);
 };

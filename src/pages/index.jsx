@@ -53,7 +53,7 @@ export default function Home({ tweets, setTweets, currentUser, setCurrentUser, u
     return false;
   };
 
-  const a9010 = tweets.sort((a9011, a9012) => ((Date.now() - a9012.timestamp) < (1000 * 60 * 60 * 24)) ? (a9012.sortKey - a9011.sortKey) : (a9012.timestamp - a9011.timestamp))
+  const a9010 = tweets.sort((a9011, a9012) => ((Date.now() - a9012.timestamp) < (1000 * 60 * 30 * 24)) ? (a9012.sortKey - a9011.sortKey) : (a9012.timestamp - a9011.timestamp))
 
   console.log(tweets);
   return (
