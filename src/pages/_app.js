@@ -16,6 +16,7 @@ const DEFAULT_TWEETS = [
     likedBy: [],
     id: 0,
     rootId: 0,
+    type: 'original'
   },
   {
     content: 'My second tweets!',
@@ -25,7 +26,8 @@ const DEFAULT_TWEETS = [
     sortKey: 0,
     likedBy: [],
     id: 1,
-    rootId: 1
+    rootId: 1,
+    type: 'original'
   }
 ];
 

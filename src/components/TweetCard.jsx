@@ -39,7 +39,7 @@ const retweet = (tweetId, currentUser, tweets, setTweets) => {
 };
 
 export default function TweetCard({ tweet, currentUser, tweets, setTweets }) {
-  const { content, username, timestamp, likedBy, rootId, id } = tweet;
+  const { content, username, timestamp, likedBy, rootId, id, type } = tweet;
   return (
     <Card>
       <CardBody>
@@ -49,7 +49,10 @@ export default function TweetCard({ tweet, currentUser, tweets, setTweets }) {
           {likedBy.includes(currentUser) || username === currentUser ? null : <Button ml={2} size="xs" colorScheme="pink" onClick={() => likeTweet(rootId, currentUser, tweets, setTweets)}>{'<3'}</Button>}
           {username !== currentUser && <Button ml={2} size="xs" onClick={() => retweet(rootId, currentUser, tweets, setTweets)}>Retweet</Button>}
         </Text>
-        <Text fontSize="xs"><Link href={`/tweets/${id}`}><i>{calcTime(timestamp)}</i></Link></Text>
+        <Text fontSize="xs">
+          <Link href={`/tweets/${id}`}><i>{calcTime(timestamp)}</i></Link>{' '}
+          {type === 'reply' && <Link href={`/tweets/${rootId}`}>View Original</Link>}
+        </Text>
       </CardBody>
     </Card>
   );
