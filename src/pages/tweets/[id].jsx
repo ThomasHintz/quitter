@@ -31,7 +31,7 @@ const Tweet = ({ tweets, setTweets, currentUser, setCurrentUser, users }) => {
       <Stack spacing='4'>
         {selectedTweets.map((tweet) => (
           <TweetCard
-            key={`${tweet.content}-${tweet.username}-${tweet.timestamp}`}
+            key={`${tweet.id}`}
             tweet={tweet}
             currentUser={currentUser}
             tweets={tweets}

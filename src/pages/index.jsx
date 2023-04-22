@@ -83,7 +83,7 @@ export default function Home({ tweets, setTweets, currentUser, setCurrentUser, u
             <Stack spacing='4'>
               {a9010.filter((a9006) => a9006.username === a9006.timeline).map((tweet) => (
                 <TweetCard
-                  key={`${tweet.content}-${tweet.username}-${tweet.timestamp}`}
+                  key={tweet.id}
                   tweet={tweet}
                   currentUser={currentUser}
                   tweets={tweets}
@@ -98,7 +98,7 @@ export default function Home({ tweets, setTweets, currentUser, setCurrentUser, u
               <Stack spacing='4'>
                 {a9010.filter((tweet) => tweet.timeline === currentUser).map((tweet) => (
                   <TweetCard
-                    key={`${tweet.content}-${tweet.username}-${tweet.timestamp}`}
+                    key={tweet.id}
                     tweet={tweet}
                     currentUser={currentUser}
                     tweets={tweets}
