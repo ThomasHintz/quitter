@@ -26,12 +26,10 @@ const calcTime = (start) => {
   }
 }
 
-const likeTweet = (a9014, a9020, tweets, setTweets) => {
-  const a9016 = tweets.filter((a9016) => a9016.rootId === a9014);
-  let a9018 = [];
-  const a9021 = a9020 === 'space_karen' ? [a9020, a9020] : [];
-  a9018 = [...a9016.map((a9019) => { return { ...a9019, likedBy: [a9020, ...a9021, ...a9019.likedBy] } }), ...tweets.filter((a9015) => a9015.rootId === a9014)];
-  setTweets(a9018);
+const likeTweet = (a9014, a9020, tweets, setTweets) => { // a9014 = id, a9020 = currentUser
+  const a9016 = tweets.filter((a9016) => a9016.rootId === a9014); // tweets to like
+  const a9021 = a9020 === 'space_karen' ? [a9020, a9020] : []; // extra "like" tweets from space_karen
+  setTweets([...a9016.map((a9019) => { return { ...a9019, likedBy: [a9020, ...a9021, ...a9019.likedBy] } }), ...tweets.filter((a9015) => a9015.rootId !== a9014)]);
 };
 
 const retweet = (tweetId, currentUser, tweets, setTweets) => {
