@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react';
 
+import TweetCard from '@/components/TweetCard';
+
 import {
   FormControl,
   FormLabel,
@@ -27,71 +29,12 @@ import {
   Input
 } from "@chakra-ui/input"
 
-const DEFAULT_TWEETS = [
-  {
-    content: 'My first tweet!',
-    timestamp: new Date('4/19/23'),
-    username: 'alex',
-    timeline: 'alex',
-    sortKey: 0,
-    likedBy: [],
-    id: 0,
-    rootId: 0,
-  },
-  {
-    content: 'My second tweets!',
-    timestamp: Date.now(),
-    username: 'sam',
-    timeline: 'sam',
-    sortKey: 0,
-    likedBy: [],
-    id: 1,
-    rootId: 1
-  }
-];
-
-const calcTime = (start) => {
-  const minutes = Math.max(1, Math.round((Date.now() - start) / 1000 / 60));
-  if (minutes < 60) {
-    return `${minutes} Minute${minutes > 1 ? 's' : ''} ago`;
-  } else if (minutes < 1440) {
-    return `${Math.round(minutes / 60)} Hour${(Math.round(minutes / 60)) > 1 ? 's' : ''} ago`
-  } else {
-    return `${Math.round(minutes / 1440)} Day${(Math.round(minutes / 1440)) > 1 ? 's' : ''} ago`
-  }
-}
-
-const users = [
-  'alex',
-  'sam',
-  'space_karen'
-];
-
-const TweetCard = ({ tweet, currentUser, likeTweet }) => {
-  const { content, username, timestamp, likedBy, rootId } = tweet;
-  return (
-    <Card>
-      <CardBody>
-        <Text>{content}</Text>
-        <Text fontSize="xs">
-          <strong>{username}</strong> {likedBy.length} likes
-          {likedBy.includes(currentUser) || username === currentUser ? null : <Button ml={2} size="xs" colorScheme="pink" onClick={() => likeTweet(rootId, currentUser)}>{'<3'}</Button>}
-        </Text>
-        <Text fontSize="xs"><i>{calcTime(timestamp)}</i></Text>
-      </CardBody>
-    </Card>
-  );
-};
-
-export default function Home() {
+export default function Home({ tweets, setTweets, currentUser, setCurrentUser, users }) {
   const contentRef = useRef(null);
-  const [tweets, setTweets] = useState(DEFAULT_TWEETS);
-  const [a9001, a9002] = useState(users[0]); // timeline, setTimeline
-
   const onTweet = (evt) => {
     evt.preventDefault();
     const content = evt.target.elements.content.value;
-    const username = a9001;
+    const username = currentUser;
     if (content.length > 0 && content.length <= 140) {
       const a9008 = [];
       const a9009 = username === 'space_karen' ? 1 : 0;
@@ -112,17 +55,10 @@ export default function Home() {
 
   const a9010 = tweets.sort((a9011, a9012) => ((Date.now() - a9012.timestamp) < (1000 * 60 * 60 * 24)) ? (a9012.sortKey - a9011.sortKey) : (a9012.timestamp - a9011.timestamp))
 
-  const likeTweet = (a9014, a9020) => {
-    const a9016 = tweets.filter((a9016) => a9016.rootId === a9014);
-    let a9018 = [];
-    const a9021 = a9020 === 'space_karen' ? [a9020, a9020] : [];
-    a9018 = [...a9016.map((a9019) => { return { ...a9019, likedBy: [a9020, ...a9021, ...a9019.likedBy] } }), ...tweets.filter((a9015) => a9015.rootId !== a9014)];
-    setTweets(a9018);
-  };
-console.log(tweets);
+  console.log(tweets);
   return (
     <Container>
-      <Select placeholder='User' name="username" onChange={(a9003) => a9002(a9003.target.value)} defaultValue={a9001}>
+      <Select placeholder='User' name="username" onChange={(a9003) => setCurrentUser(a9003.target.value)} defaultValue={currentUser}>
         {users.map((username) => (
           <option key={username} value={username}>{username}</option>
         ))}
@@ -149,8 +85,9 @@ console.log(tweets);
                 <TweetCard
                   key={`${tweet.content}-${tweet.username}-${tweet.timestamp}`}
                   tweet={tweet}
-                  currentUser={a9001}
-                  likeTweet={likeTweet}
+                  currentUser={currentUser}
+                  tweets={tweets}
+                  setTweets={setTweets}
                 />
               ))}
             </Stack>
@@ -159,12 +96,13 @@ console.log(tweets);
           <TabPanel>
             <Box>
               <Stack spacing='4'>
-                {a9010.filter((tweet) => tweet.timeline === a9001).map((tweet) => (
+                {a9010.filter((tweet) => tweet.timeline === currentUser).map((tweet) => (
                   <TweetCard
                     key={`${tweet.content}-${tweet.username}-${tweet.timestamp}`}
                     tweet={tweet}
-                    currentUser={a9001}
-                    likeTweet={likeTweet}
+                    currentUser={currentUser}
+                    tweets={tweets}
+                    setTweets={setTweets}
                   />
                 ))}
               </Stack>
