@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 import {
   FormControl,
@@ -18,7 +18,9 @@ import {
   Stack,
   Select,
   Box,
-  Button
+  Button,
+  Container,
+  Tabs, TabList, TabPanels, Tab, TabPanel,
 } from '@chakra-ui/react'
 
 import {
@@ -65,14 +67,31 @@ const users = [
   'space_karen'
 ];
 
+const TweetCard = ({ tweet, currentUser, likeTweet }) => {
+  const { content, username, timestamp, likedBy, rootId } = tweet;
+  return (
+    <Card>
+      <CardBody>
+        <Text>{content}</Text>
+        <Text fontSize="xs">
+          <strong>{username}</strong> {likedBy.length} likes
+          {likedBy.includes(currentUser) || username === currentUser ? null : <Button ml={2} size="xs" colorScheme="pink" onClick={() => likeTweet(rootId, currentUser)}>{'<3'}</Button>}
+        </Text>
+        <Text fontSize="xs"><i>{calcTime(timestamp)}</i></Text>
+      </CardBody>
+    </Card>
+  );
+};
+
 export default function Home() {
+  const contentRef = useRef(null);
   const [tweets, setTweets] = useState(DEFAULT_TWEETS);
-  const [a9001, a9002] = useState(users[0]);
+  const [a9001, a9002] = useState(users[0]); // timeline, setTimeline
 
   const onTweet = (evt) => {
     evt.preventDefault();
     const content = evt.target.elements.content.value;
-    const username = evt.target.elements.username.value;
+    const username = a9001;
     if (content.length > 0 && content.length <= 140) {
       const a9008 = [];
       const a9009 = username === 'space_karen' ? 1 : 0;
@@ -86,6 +105,7 @@ export default function Home() {
              a9008.push({ content, timestamp: Date.now(), username, timeline: a9005, sortKey: a9009, likedBy: [], id: a9013, rootId: a9017 });
            });
       setTweets([...a9008, ...tweets]);
+      contentRef.current.value = '';
     }
     return false;
   };
@@ -101,53 +121,57 @@ export default function Home() {
   };
 console.log(tweets);
   return (
-    <>
+    <Container>
+      <Select placeholder='User' name="username" onChange={(a9003) => a9002(a9003.target.value)} defaultValue={a9001}>
+        {users.map((username) => (
+          <option key={username} value={username}>{username}</option>
+        ))}
+      </Select>
+      <Divider mt={4} mb={4} />
       <form onSubmit={onTweet}>
         <FormControl>
-          <FormLabel>Tweet</FormLabel>
-          <Input placeholder="Hello..." id="content" name="content" />
-          <Select placeholder='User' name="username">
-            {users.map((username) => (
-              <option key={username} value={username}>{username}</option>
-            ))}
-          </Select>
+          <FormLabel>Tweet!</FormLabel>
+          <Input placeholder="Hello..." id="content" name="content" ref={contentRef} />
           <FormErrorMessage>Tweet must be between 1 and 140 chars</FormErrorMessage>
         </FormControl>
       </form>
-      <Stack direction="row" spacing="4">
-        <Box>
-          <Text>Main</Text>
-          <Stack spacing='4'>
-            {a9010.filter((a9006) => a9006.username === a9006.timeline).map(({ content, timestamp, username, likedBy, id }) => (
-              <Card key={`${content}-${username}-${timestamp}`}>
-                <CardBody>
-                  <Text>{content}</Text>
-                  <Text>By {username} with {likedBy.length} likes</Text>
-                  <Text>{calcTime(timestamp)}</Text>
-                </CardBody>
-              </Card>
-            ))}
-          </Stack>
-        </Box>
-        <Box>
-          <Select placeholder='User' name="username" onChange={(a9003) => a9002(a9003.target.value)}>
-            {users.map((username) => (
-              <option key={username} value={username}>{username}</option>
-            ))}
-          </Select>
-          <Stack spacing='4'>
-            {a9010.filter((tweet) => tweet.timeline === a9001).map(({ content, timestamp, username, likedBy, timeline, id, rootId }) => (
-              <Card key={content}>
-                <CardBody>
-                  <Text>{content}</Text>
-                  <Text>By {username} with {likedBy.length} likes</Text><Text>{calcTime(timestamp)}</Text>
-                  {likedBy.includes(timeline) ? null : <Button onClick={() => likeTweet(rootId, a9001)}>Like me!</Button>}
-                </CardBody>
-              </Card>
-            ))}
-          </Stack>
-        </Box>
-      </Stack>
-    </>
+      <Divider mt={4} mb={4} />
+      <Tabs>
+        <TabList>
+          <Tab>Home</Tab>
+          <Tab>Profile</Tab>
+        </TabList>
+
+        <TabPanels>
+          <TabPanel><Box>
+            <Stack spacing='4'>
+              {a9010.filter((a9006) => a9006.username === a9006.timeline).map((tweet) => (
+                <TweetCard
+                  key={`${tweet.content}-${tweet.username}-${tweet.timestamp}`}
+                  tweet={tweet}
+                  currentUser={a9001}
+                  likeTweet={likeTweet}
+                />
+              ))}
+            </Stack>
+          </Box>
+          </TabPanel>
+          <TabPanel>
+            <Box>
+              <Stack spacing='4'>
+                {a9010.filter((tweet) => tweet.timeline === a9001).map((tweet) => (
+                  <TweetCard
+                    key={`${tweet.content}-${tweet.username}-${tweet.timestamp}`}
+                    tweet={tweet}
+                    currentUser={a9001}
+                    likeTweet={likeTweet}
+                  />
+                ))}
+              </Stack>
+            </Box>
+          </TabPanel>
+        </TabPanels>
+      </Tabs>
+    </Container>
   )
 }
