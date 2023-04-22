@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 
 import TweetCard from '@/components/TweetCard';
+import { createTweet } from '@/utils/tweets';
 
 import {
   FormControl,
@@ -41,10 +42,11 @@ export default function Home({ tweets, setTweets, currentUser, setCurrentUser, u
       let a9013 = Math.max.apply(null, tweets.map((a9014) => a9014.id))
       a9013++;
       const a9017 = a9013;
-      a9008.push({ content, timestamp: Date.now(), username, timeline: username, sortKey: a9009, likedBy: [], id: a9013, rootId: a9013, type: 'original' });
+      a9008.push(createTweet({ tweets, content, username, rootId: a9013 }))
       users.filter((a9004) => content.includes(`@${a9004}`))
            .forEach((a9005) => {
              a9013++;
+             // change this to use createTweet
              a9008.push({ content, timestamp: Date.now(), username, timeline: a9005, sortKey: a9009, likedBy: [], id: a9013, rootId: a9017, type: 'atted' });
            });
       setTweets([...a9008, ...tweets]);
