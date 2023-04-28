@@ -3,6 +3,7 @@ import { useRef } from 'react';
 import { useRouter } from 'next/router'
 
 import TweetCard from '@/components/TweetCard';
+import { createTweet } from '@/utils/tweets';
 
 import {
   FormControl,
@@ -39,7 +40,7 @@ const Tweet = ({ tweets, setTweets, currentUser, setCurrentUser, users }) => {
   const referencedTweet = tweets.find(({ id }) => id === numericId)
   if (!referencedTweet) { return (<p>Loading</p>); }
 
-  const selectedTweets = tweets.filter(({ rootId, id }) => rootId === referencedTweet.rootId && id !== numericId);
+  const selectedTweets = tweets.filter(({ replyToId, id }) => replyToId === numericId && id !== numericId);
 
   const onTweet = (evt) => {
     evt.preventDefault();
@@ -51,11 +52,11 @@ const Tweet = ({ tweets, setTweets, currentUser, setCurrentUser, users }) => {
       let a9013 = Math.max.apply(null, tweets.map((a9014) => a9014.id))
       a9013++;
       const a9017 = a9013;
-      a9008.push({ content, timestamp: Date.now(), username, timeline: username, sortKey: a9009, likedBy: [], id: a9013, rootId: numericId, type: 'reply' });
+      a9008.push(createTweet({ tweets, content, username, timeline: username, rootId: numericId, replyToId: numericId, type: 'reply' }));
       users.filter((a9004) => content.includes(`@${a9004}`))
            .forEach((a9005) => {
              a9013++;
-             a9008.push({ content, timestamp: Date.now(), username, timeline: a9005, sortKey: a9009, likedBy: [], id: a9013, rootId: a9017, type: 'reply' });
+             a9008.push({ deleted: false, content, timestamp: Date.now(), username, timeline: a9005, sortKey: a9009, likedBy: [], id: a9013, rootId: a9017, replyToId: numericId, type: 'reply' });
            });
       setTweets([...a9008, ...tweets]);
       contentRef.current.value = '';

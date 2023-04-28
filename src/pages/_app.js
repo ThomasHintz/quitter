@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import '@/styles/globals.css'
 
@@ -16,7 +16,9 @@ const DEFAULT_TWEETS = [
     likedBy: [],
     id: 0,
     rootId: 0,
-    type: 'original'
+    replyToId: null,
+    type: 'original',
+    deleted: false
   },
   {
     content: 'My second tweets!',
@@ -27,7 +29,34 @@ const DEFAULT_TWEETS = [
     likedBy: [],
     id: 1,
     rootId: 1,
-    type: 'original'
+    type: 'original',
+    replyToId: null,
+    deleted: false
+  }
+];
+
+const DEFAULT_TWEETS2 = [
+  {
+    content: 'My first tweet!',
+    timestamp: new Date('4/19/23'),
+    username: 'alex',
+    references: [],
+    sortKey: 0,
+    likedBy: [],
+    id: 0,
+    rootId: 0,
+    deleted: false
+  },
+  {
+    content: 'My second tweets!',
+    timestamp: Date.now(),
+    username: 'sam',
+    references: [],
+    sortKey: 0,
+    likedBy: [],
+    id: 1,
+    rootId: 1,
+    deleted: false
   }
 ];
 
@@ -38,11 +67,23 @@ const users = [
 ];
 
 export default function App({ Component, pageProps }) {
-  const [tweets, setTweets] = useState(DEFAULT_TWEETS);
+  const [tweets, setTweets] = useState([]);
+  useEffect(() => {
+    const storedTweets = localStorage.getItem('tweets');
+    if (storedTweets) {
+      setTweets(JSON.parse(storedTweets));
+    } else {
+      setTweets(DEFAULT_TWEETS);
+    }
+  }, []);
   const [currentUser, setCurrentUser] = useState(users[0]); // timeline, setTimeline
+  const setAndStoreTweets = (tweets) => {
+    setTweets(tweets);
+    localStorage.setItem('tweets', JSON.stringify(tweets));
+  };
   return (
     <ChakraProvider>
-    <Component tweets={tweets} setTweets={setTweets} currentUser={currentUser} setCurrentUser={setCurrentUser} users={users} {...pageProps} />
+    <Component tweets={tweets} setTweets={setAndStoreTweets} currentUser={currentUser} setCurrentUser={setCurrentUser} users={users} {...pageProps} />
     </ChakraProvider>
   )
 }

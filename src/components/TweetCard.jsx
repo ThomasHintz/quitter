@@ -38,8 +38,16 @@ const retweet = (tweetId, currentUser, tweets, setTweets) => {
   setTweets([...affectedTweets.map((a9019) => { return { ...a9019, content: `Retweet from: ${a9019.username}|${a9019.content}`, timestamp: Date.now(), username: currentUser, id: nextId, timeline: currentUser, likedBy: [] } }), ...tweets]);
 };
 
+const handleDeleteTweet = (tweet, tweets, setTweets) => {
+  const affectedTweet = tweets.find((t) => t.id === tweet.id);
+  setTweets([{ ...affectedTweet, deleted: true }, ...tweets.filter((t) => t.id !== affectedTweet.id)]);
+}
+
 export default function TweetCard({ tweet, currentUser, tweets, setTweets }) {
   const { content, username, timestamp, likedBy, rootId, id, type } = tweet;
+  if (tweet?.deleted) {
+    return null;
+  }
   return (
     <Card>
       <CardBody>
@@ -52,6 +60,8 @@ export default function TweetCard({ tweet, currentUser, tweets, setTweets }) {
         <Text fontSize="xs">
           <Link href={`/tweets/${id}`}><i>{calcTime(timestamp)}</i></Link>{' '}
           {type === 'reply' && <Link href={`/tweets/${rootId}`}>View Original</Link>}
+          {' '}
+          {currentUser === 'space_karen' && <Button size="xs" onClick={() => handleDeleteTweet(tweet, tweets, setTweets)}>Delete</Button>}
         </Text>
       </CardBody>
     </Card>
