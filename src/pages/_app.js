@@ -38,7 +38,7 @@ const DEFAULT_TWEETS = [
 const DEFAULT_TWEETS2 = [
   {
     content: 'My first tweet!',
-    timestamp: new Date('4/19/23'),
+    timestamp: Date.now(),
     username: 'alex',
     references: [],
     sortKey: 0,
@@ -73,7 +73,7 @@ export default function App({ Component, pageProps }) {
     if (storedTweets) {
       setTweets(JSON.parse(storedTweets));
     } else {
-      setTweets(DEFAULT_TWEETS);
+      setTweets(DEFAULT_TWEETS2);
     }
   }, []);
   const [currentUser, setCurrentUser] = useState(users[0]); // timeline, setTimeline
